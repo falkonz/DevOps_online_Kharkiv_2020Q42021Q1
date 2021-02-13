@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Parser v0.0.1
+
+usage() {
+  echo -e "\nusage: Parser [apache_log_path]\n"
+}
+
+if [ $# = 0 ]; then
+    usage
+    exit 1
+fi
+
+if [[ $# > 1 ]]; then
+    usage
+    tput setaf 1; echo -e "\nToo many arguments\n"
+    exit 1
+fi
+
+echo -e "\nApache_log analyzer\n"
+
+PS3="Select an action:  "
+
+COLUMNS=1
+select  opt in Ip_from_which_there-were_the_most_requests The_most_requested_page The_number_of_requests_from_each_IP Non-existent_pages The_time_at_which_the_site_received_the_most_requests Search_bots_that_visited_the_site_UA+IP quit; do
+
+  case $opt in
+    Ip_from_which_there-were_the_most_requests)
+      awk '{ print $1}' $1 | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}'
+      ;;
+    The_most_requested_page)
+      awk {'print $7'} $1 |grep -v "favicon.ico" | sort | uniq -c | sort -nr | head -n 1 | awk '{print $2}'
+      ;;
+    The_number_of_requests_from_each_IP)
+      awk '{ print $1}' $1 | sort | uniq -c | sort -nr
+      ;;
+    Non-existent_pages)
+      grep " 404 " $1 | cut -d ' ' -f 7 | sort | uniq -c | sort -nr
+      ;;
+    The_time_at_which_the_site_received_the_most_requests)
+      cat apache.log | cut -d[ -f2 | cut -d] -f1 | awk -F: '{print $2":"$3}' | sort  | uniq -c | sort -nr |head -n 1
+      ;;
+    Search_bots_that_visited_the_site_UA+IP)
+      cat $1 | cut -d\  -f -'1 12'- |grep -F -e "Googlebot" -e "bingbot" -e "msnbot" -e "Applebot" -e "Mail.RU_Bot" -e "AhrefsBot" -e "YandexBot" -e "SentiBot" -e "Twitterbot" -e "msnbot" | sort |uniq -c |sort -rn
+      ;;
+    quit)
+      break
+      ;;
+    *) 
+      echo "Wrong option $REPLY"
+      ;;
+  esac
+done

@@ -1,0 +1,7 @@
+1) VMware ESXi, KVM, Xen/Citrix XenServer, Microsoft Hyper-V, VMware Fusion, VMware Workstation, Oracle VM VirtualBox, Parallels
+
+2) The main difference between hypervisors is that some run on bare metal and others run on top of an OS. Each hypervisor type also has its own pros and cons and specific use cases.
+
+A hypervisor that runs directly on the host machine's physical hardware, and it's referred to as a bare-metal hypervisor; it doesn't have to load an underlying OS first. With direct access to the underlying hardware and no other software -- such as OSes and device drivers. These hypervisors are regarded as the most efficient and best-performing hypervisors available for enterprise computing. VMware ESXi, Microsoft Hyper-V Server, and KVM are examples of these hypervisors. 
+
+Another hypervisor is typically installed on top of an existing OS, and it's called a hosted hypervisor because it relies on the host machine's pre-existing OS to manage calls to CPU, memory, storage, and network resources. VMware Fusion, Oracle VM VirtualBox,  Parallels, and VMware Workstation are examples of these hypervisors

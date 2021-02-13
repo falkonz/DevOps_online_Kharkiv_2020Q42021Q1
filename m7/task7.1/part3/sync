@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Sync v0.0.1
+
+USER_BACKUP=`echo $USER`
+SOURCE_DIR=$1
+BACKUP_DIR=$2
+LOGFILE="/home/sokol/sync.log"
+TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+
+usage() {
+  echo -e "\nusage: sync [SOURCE_DIR] [BACKUP_DIR]\n"
+}
+
+if [ $# = 0 ]; then
+    usage
+    exit 0
+fi
+
+if [[ $# > 2 ]]; then
+    usage
+    tput setaf 1; echo -e "\nToo many arguments\n"
+    exit 1
+fi
+
+if [[ ! -e $SOURCE_DIR ]]; then
+    echo "Error: Directory $SOURCE_DIR does not exists "
+    exit 1
+fi
+
+cp -auv $SOURCE_DIR/. $BACKUP_DIR | awk '{print $NF}' |sed "s/^'*//;s/'*$//;s/\.\///g;s/^/$TIMESTAMP Added - /" >> $LOGFILE
+
+if [ -d $BACKUP_DIR ]; then
+list_diff=$(diff -r $SOURCE_DIR $BACKUP_DIR |grep "$BACKUP_DIR" |cut -d " " -f 3- |sed -r 's/: /\//g')
+OIFS="$IFS"
+IFS=$'\n'
+ for i in ${list_diff[@]}; do
+      rm -rf "$i"
+      echo "$TIMESTAMP Removed - $i" >> $LOGFILE
+ done
+fi
+IFS="$OIFS"
+
+chown -R $USER_BACKUP:$USER_BACKUP "$BACKUP_DIR"

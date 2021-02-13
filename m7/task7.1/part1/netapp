@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Netapp v0.0.1
+
+ip_range=$(ip -o -f inet addr show | awk '/scope global dynamic/ {print $4}')
+arg=$1
+
+version() {
+  echo -e "\nnetapp version 0.0.1\n"
+}
+
+
+usage() {
+  echo -e "\nusage: netapp [OPTION...]\n"
+  echo -e "Command-line options available for the netapp command are:\n"
+  echo    "      --version          Prints the netapp version number of the script and exits."
+  echo    "      --target           Displays a list of open system TCP ports."
+  echo    "      --all              Displays the IP addresses and symbolic names of all hosts in the current subnet."
+}
+
+wrong_arg() {
+  usage
+  tput setaf 1; echo -e "\nBad option $arg. Aborting.\n"
+}
+
+get_net_info() {
+nmap -sn --system-dns $ip_range |grep "Nmap scan" |awk '{ print  $5 "  " $6}' |sed -r 's/(\(|\))//g'
+}
+
+get_open_tcp_port() {
+  echo -e "\nOpen system TCP ports  < 1024\n"
+  ss -lntp sport \< :1024 |awk 'NR>2{print $4}' | sed 's/.*://' | sort -r |uniq
+  echo -e "\n"
+}
+
+if [ $# = 0 ]; then
+    usage
+fi
+
+if [[ $# > 1 ]]; then
+    usage
+    tput setaf 1; echo -e "\nToo many arguments\n"
+    exit 1
+fi
+
+
+while [ "$#" -gt 0 ]
+do
+  case "$1" in
+  --all)
+        get_net_info
+        exit 0
+        ;;
+  --version)
+        version
+        exit 0
+        ;;
+  --target)
+        get_open_tcp_port
+        exit 0
+        ;;
+  *)
+        wrong_arg
+        break
+        ;;
+  esac
+done
+
+exit 0
