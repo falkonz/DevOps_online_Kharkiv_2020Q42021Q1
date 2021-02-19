@@ -38,7 +38,7 @@ pipeline {
                 echo " ============== Testing =================="
                     sh '''
                     docker run -d -p 80:80 --name falkonz-finalproject-$BUILD_NUMBER -t $registry:$BUILD_NUMBER
-                    curl --head http://0.0.0.0:80
+                    docker container ls
                     '''
             }
         }
