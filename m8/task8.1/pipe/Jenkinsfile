@@ -9,7 +9,7 @@ pipeline {
         registry = "falkonz/finalproject"
         credId = 'dockerHub'
     }
-    agent { 
+    agent {
         label 'master'
     }
     triggers { pollSCM('H/2 * * * *') }
@@ -33,7 +33,7 @@ pipeline {
                 }
             }
         }
-        stage("Test"){
+        stage("Test") {
             steps {
                 echo " ============== Testing =================="
                     sh '''
@@ -51,7 +51,8 @@ pipeline {
                     docker push $registry:$BUILD_NUMBER
                     docker rmi $registry:$BUILD_NUMBER
                     '''
-            }
-        }
-    }
+                }
+           }
+       }
+   }
 }
