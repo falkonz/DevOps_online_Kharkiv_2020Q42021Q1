@@ -37,8 +37,8 @@ pipeline {
             steps {
                 echo " ============== Testing =================="
                     sh '''
-                    docker run -d -p 80:80 --name falkonz-finalproject-$BUILD_NUMBER -t $registry:$BUILD_NUMBER
-                    docker container ls
+                    docker run -d --rm -p 80:80 --name falkonz-finalproject-$BUILD_NUMBER -t $registry:$BUILD_NUMBER
+                    docker container ls |grep finalproject
                     '''
             }
         }
