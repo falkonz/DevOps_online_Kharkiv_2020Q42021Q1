@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+
+    jenkins:
+        build:
+            context: ./
+            args:
+                HOST_UID: ${HOST_UID}
+                HOST_GID: ${HOST_GID}
+        image: falcon/jenkins-dind:latest
+        container_name: jenkins-dind
+        restart: unless-stopped
+        volumes:
+            - ${HOST_DOCKER}:/var/run/docker.sock
+            - ${HOST_JENKINS_DATA}:/var/jenkins_home
+        ports:
+            - "${HOST_WWW}:8080"
+            - "${HOST_OTHER}:50000"
+        networks:
+            - jdnet
+
+
+networks:
+    jdnet:
+        driver: bridge
+
